@@ -6,7 +6,7 @@ function nn = nnff(nn, x, y)
     n = nn.n;
     m = size(x, 1);
     
-    x = [ones(m,1) x];
+    x = [gpuArray(ones(m,1)) x];
     nn.a{1} = x;
 
     %feedforward pass
@@ -35,7 +35,7 @@ function nn = nnff(nn, x, y)
         end
         
         %Add the bias term
-        nn.a{i} = [ones(m,1) nn.a{i}];
+        nn.a{i} = [gpuArray(ones(m,1)) nn.a{i}];
     end
     switch nn.output 
         case 'sigm'

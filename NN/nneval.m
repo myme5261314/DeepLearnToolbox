@@ -5,7 +5,7 @@ assert(nargin == 4 || nargin == 6, 'Wrong number of arguments');
 
 % training performance
 nn                    = nnff(nn, train_x, train_y);
-loss.train.e(end + 1) = nn.L;
+loss.train.e(end + 1) = gather(nn.L);
 
 % validation performance
 if nargin == 6

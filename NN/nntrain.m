@@ -32,7 +32,7 @@ numbatches = m / batchsize;
 
 assert(rem(numbatches, 1) == 0, 'numbatches must be a integer');
 
-L = zeros(numepochs*numbatches,1);
+L = gpuArray(zeros(numepochs*numbatches,1));
 n = 1;
 for i = 1 : numepochs
     tic;
@@ -40,6 +40,7 @@ for i = 1 : numepochs
     kk = randperm(m);
     for l = 1 : numbatches
         batch_x = train_x(kk((l - 1) * batchsize + 1 : l * batchsize), :);
+        batch_x = gpuArray(batch_x);
         
         %Add noise to input (for use in denoising autoencoder)
         if(nn.inputZeroMaskedFraction ~= 0)
@@ -47,7 +48,7 @@ for i = 1 : numepochs
         end
         
         batch_y = train_y(kk((l - 1) * batchsize + 1 : l * batchsize), :);
-        
+        batch_y = gpuArray(batch_y);
         nn = nnff(nn, batch_x, batch_y);
         nn = nnbp(nn);
         nn = nnapplygrads(nn);
@@ -63,8 +64,16 @@ for i = 1 : numepochs
         loss = nneval(nn, loss, train_x, train_y, val_x, val_y);
         str_perf = sprintf('; Full-batch train mse = %f, val mse = %f', loss.train.e(end), loss.val.e(end));
     else
-        loss = nneval(nn, loss, train_x, train_y);
-        str_perf = sprintf('; Full-batch train err = %f', loss.train.e(end));
+%         loss = nneval(nn, loss, train_x, train_y);
+        
+        for l = 1 : numbatches
+            batch_x = train_x(kk((l - 1) * batchsize + 1 : l * batchsize), :);
+            batch_x = gpuArray(batch_x);
+            batch_y = train_y(kk((l - 1) * batchsize + 1 : l * batchsize), :);
+            batch_y = gpuArray(batch_y);
+            loss = nneval(nn, loss, batch_x, batch_y);
+        end
+        str_perf = sprintf('; Full-batch train err = %f', sum(loss.train.e(end-numbatches+1:end)));
     end
     if ishandle(fhandle)
         nnupdatefigures(nn, fhandle, loss, opts, i);
