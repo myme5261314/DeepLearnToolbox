@@ -26,7 +26,8 @@ function rbm = rbmtrain(rbm, x, opts)
             g_v1 = gpuArray(single(batch));
             g_h1 = sigmrnd(bsxfun(@plus, g_c', g_v1*g_W'));
 %             g_v2 = sigmrnd(bsxfun(@plus, g_b', g_h1*g_W));
-            g_v2 = normrnd(bsxfun(@plus, g_b', g_h1*g_W), 1);
+%             g_v2 = normrnd(bsxfun(@plus, g_b', g_h1*g_W), 1);
+			g_v2 = normrnd(bsxfun(@rdivide, bsxfun(@plus, g_b', g_h1*g_W), 2), sqrt(0.5));
             g_h2 = sigm(bsxfun(@plus, g_c', g_v2*g_W'));
 
             g_c1 = g_h1' * g_v1;
