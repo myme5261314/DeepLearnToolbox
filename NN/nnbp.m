@@ -6,7 +6,7 @@ function nn = nnbp(nn)
     sparsityError = 0;
     switch nn.output
         case 'sigm'
-            d{n} = - nn.e .* (nn.a{n} .* (1 - nn.a{n}));
+            d{n} = gpuArray(- nn.e .* (nn.a{n} .* (1 - nn.a{n})));
         case {'softmax','linear'}
             d{n} = - nn.e;
     end

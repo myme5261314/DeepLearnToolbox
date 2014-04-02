@@ -9,7 +9,7 @@ function rbm = rbmtrain(rbm, x, opts)
     g_W = gpuArray(single(rbm.W));
     g_vW = gpuArray(single(rbm.vW));
     g_c = gpuArray(single(rbm.c));
-    g_vc = gpuArray(single(rbm.vc));
+%     g_vc = gpuArray(single(rbm.vc));
     g_b = gpuArray(single(rbm.b));
     g_vb = gpuArray(single(rbm.vb));
     for i = 1 : opts.numepochs
@@ -27,7 +27,8 @@ function rbm = rbmtrain(rbm, x, opts)
             g_h1 = sigmrnd(bsxfun(@plus, g_c', g_v1*g_W'));
 %             g_v2 = sigmrnd(bsxfun(@plus, g_b', g_h1*g_W));
 %             g_v2 = normrnd(bsxfun(@plus, g_b', g_h1*g_W), 1);
-			g_v2 = normrnd(bsxfun(@rdivide, bsxfun(@plus, g_b', g_h1*g_W), 2), sqrt(0.5));
+            g_v2 = bsxfun(@plus, g_b', g_h1*g_W);% + gpuArray(randn(size(g_v1), 'single'));
+% 			g_v2 = normrnd(bsxfun(@rdivide, bsxfun(@plus, g_b', g_h1*g_W), 2), sqrt(0.5));
             g_h2 = sigm(bsxfun(@plus, g_c', g_v2*g_W'));
 
             g_c1 = g_h1' * g_v1;
@@ -35,11 +36,11 @@ function rbm = rbmtrain(rbm, x, opts)
 
             g_vW = rbm.momentum * g_vW + rbm.alpha * ((g_c1 - g_c2)     / opts.batchsize - opts.L2*g_W);
             g_vb = rbm.momentum * g_vb + rbm.alpha * sum(g_v1 - g_v2)' / opts.batchsize;
-            g_vc = rbm.momentum * g_vc + rbm.alpha * sum(g_h1 - g_h2)' / opts.batchsize;
+%             g_vc = rbm.momentum * g_vc + rbm.alpha * sum(g_h1 - g_h2)' / opts.batchsize;
 
             g_W = g_W + g_vW;
             g_b = g_b + g_vb;
-            g_c = g_c + g_vc;
+%             g_c = g_c + g_vc;
 
             err = err + gather(sum(sum((g_v1 - g_v2) .^ 2))) / opts.batchsize;
             
@@ -51,7 +52,7 @@ function rbm = rbmtrain(rbm, x, opts)
     rbm.W = gather(g_W);
     rbm.vW = gather(g_vW);
     rbm.c = gather(g_c);
-    rbm.vc = gather(g_vc);
+%     rbm.vc = gather(g_vc);
     rbm.b = gather(g_b);
     rbm.vb = gather(g_vb);
 end

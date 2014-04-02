@@ -9,7 +9,7 @@ function dbn = dbnsetup(dbn, x, opts)
 %         dbn.rbm{u}.W  = zeros(dbn.sizes(u + 1), dbn.sizes(u));
         dbn.rbm{u}.vW = zeros(dbn.sizes(u + 1), dbn.sizes(u));
 %         dbn.rbm{u}.W = (rand(dbn.sizes(u + 1), dbn.sizes(u))-0.5)*8*sqrt(6/(dbn.sizes(u + 1)+dbn.sizes(u)));
-        dbn.rbm{u}.W = 0.1*randn(dbn.sizes(u + 1), dbn.sizes(u));
+        dbn.rbm{u}.W = 0.01*randn(dbn.sizes(u + 1), dbn.sizes(u));
 %         dbn.rbm{u}.vW = dbn.rbm{u}.W;
         
 
