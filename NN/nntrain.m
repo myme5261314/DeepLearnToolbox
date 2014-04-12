@@ -6,7 +6,7 @@ function [nn, L]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
 % errors, weights and biases, (nn.a, nn.e, nn.W, nn.b) and L, the sum
 % squared error for each training minibatch.
 
-assert(isfloat(train_x), 'train_x must be a float');
+% assert(isfloat(train_x), 'train_x must be a float');
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 
 loss.train.e               = [];
@@ -40,6 +40,12 @@ for i = 1 : numepochs
     kk = randperm(m);
     for l = 1 : numbatches
         batch_x = train_x(kk((l - 1) * batchsize + 1 : l * batchsize), :);
+        batch_x = double(batch_x);
+        if isfield(opts, 'mu') && isfield(opts, 'sigma')
+            batch_x = bsxfun(@minus, batch_x, opts.mu);
+            idx = find(opts.sigma);
+            batch_x(:,idx) = bsxfun(@rdivide, batch_x(:,idx), opts.sigma(:,idx));
+        end
         batch_x = gpuArray(batch_x);
         
         %Add noise to input (for use in denoising autoencoder)
@@ -68,6 +74,12 @@ for i = 1 : numepochs
         
         for l = 1 : numbatches
             batch_x = train_x(kk((l - 1) * batchsize + 1 : l * batchsize), :);
+            batch_x = double(batch_x);
+            if isfield(nn, 'mu') && isfield(nn, 'sigma')
+                batch_x = bsxfun(@minus, batch_x, nn.mu);
+                idx = find(nn.sigma);
+                batch_x(:,idx) = bsxfun(@rdivide, batch_x(:,idx), nn.sigma(:,idx));
+            end
             batch_x = gpuArray(batch_x);
             batch_y = train_y(kk((l - 1) * batchsize + 1 : l * batchsize), :);
             batch_y = gpuArray(batch_y);
