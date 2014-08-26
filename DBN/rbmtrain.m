@@ -2,8 +2,10 @@ function rbm = rbmtrain(rbm, x, opts)
     assert(isfloat(x), 'x must be a float');
     assert(all(x(:)>=0) && all(x(:)<=1), 'all data in x must be in [0:1]');
 %     x = [x; x];
+%     ridx = randperm(size(x,1));
+%     x = x(ridx(1:size(x,1)/60), :);
     m = size(x, 1);
-    numbatches = m / opts.batchsize;
+    numbatches = floor(m / opts.batchsize);
     
     assert(rem(numbatches, 1) == 0, 'numbatches not integer');
     
@@ -72,12 +74,14 @@ function rbm = rbmtrain(rbm, x, opts)
 %                 rbm.W = rbm.W + accuredW{one_index};
 %                 rbm.b = rbm.b + accuredb{one_index};
 %                 rbm.c = rbm.c + accuredc{one_index};
-                w2 = 1-1/thread_num;
-                w1 = 1/thread_num;
+%                 w1 = 1/thread_num;
+%                 w1 = 1/sqrt(thread_num);
+                w1 = 1-1/thread_num;
+%                 w1 = 0;
+                w2 = 1-w1;
                 if thread_num == 1
-                    t = w2;
-                    w2 = w1;
-                    w1 = t;
+                    w1 = 0;
+                    w2 = 1;
                 end
                 rbm.W = w1*rbm.W + w2*W{one_index};
                 rbm.b = w1*rbm.b + w2*b{one_index};
