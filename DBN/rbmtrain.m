@@ -2,7 +2,7 @@ function rbm = rbmtrain(rbm, x, opts)
     assert(isfloat(x), 'x must be a float');
     assert(all(x(:)>=0) && all(x(:)<=1), 'all data in x must be in [0:1]');
     m = size(x, 1);
-    numbatches = m / opts.batchsize;
+    numbatches = floor(m / opts.batchsize);
     
     assert(rem(numbatches, 1) == 0, 'numbatches not integer');
 
