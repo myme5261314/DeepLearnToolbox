@@ -6,5 +6,11 @@ function dbn = dbntrain(dbn, x, opts)
         x = rbmup(dbn.rbm{i - 1}, x);
         dbn.rbm{i} = rbmtrain(dbn.rbm{i}, x, opts);
     end
+    
+    if opts.ifdropout
+        for i=1:n
+            dbn.rbm{i}.W = dbn.rbm{i}.W / opts.dropout;
+        end
+    end
 
 end

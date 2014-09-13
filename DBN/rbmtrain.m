@@ -49,10 +49,19 @@ function rbm = rbmtrain(rbm, x, opts)
                 b{one_index} = rbm.b;
                 c{one_index} = rbm.c;
             end
+            if opts.ifdropout
+                dropOut = rand(opts.batchsize, size(rbm.W, 1)) > opts.dropout;
+            end
             v1 = batch;
             h1 = sigmrnd(repmat(c{one_index}', opts.batchsize, 1) + v1 * W{one_index}');
+            if opts.ifdropout
+                h1 = h1.*dropOut;
+            end
             v2 = sigmrnd(repmat(b{one_index}', opts.batchsize, 1) + h1 * W{one_index});
             h2 = sigm(repmat(c{one_index}', opts.batchsize, 1) + v2 * W{one_index}');
+            if opts.ifdropout
+                h2 = h2.*dropOut;
+            end
 
             c1 = h1' * v1;
             c2 = h2' * v2;
