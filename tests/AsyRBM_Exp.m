@@ -1,6 +1,6 @@
 diary('log.txt');
 diary on;
-disp('v0.07');
+disp('v0.08');
 
 error_list = zeros(20, 10);
 asy_error_list = zeros(20, 10);
@@ -53,7 +53,7 @@ end
 opts.ifAsy = 1;
 opts.n_fetch = 10;
 opts.n_push = 20;
-opts.ifdropout = 1;
+opts.ifdropout = 0;
 if ~exist('asy-rbm.mat', 'file')
     for i=1:size(asy_error_list,1)
         for j=1:size(asy_error_list,2)
