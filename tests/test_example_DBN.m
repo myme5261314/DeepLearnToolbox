@@ -31,7 +31,7 @@ test_y  = double(test_y);
 %%  ex2 train a 100-100 hidden unit DBN and use its weights to initialize a NN
 % rand('state',0)
 %train dbn
-dbn.sizes = [100 100];
+dbn.sizes = opts.sizes;
 % opts.numepochs =   30;
 % opts.batchsize = 100;
 % opts.momentum  =   0.9;

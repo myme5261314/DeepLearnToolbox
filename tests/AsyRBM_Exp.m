@@ -2,8 +2,8 @@ diary('log.txt');
 diary on;
 disp('v0.08');
 
-error_list = zeros(20, 10);
-asy_error_list = zeros(20, 10);
+error_list = zeros(5, 3);
+asy_error_list = zeros(5, 3);
 opts.numepochs =   30;
 opts.batchsize = 100;
 opts.momentum  =   0;
@@ -19,6 +19,9 @@ opts.n_push = 20;
 %% For ARBM Dropout
 opts.ifdropout = 1;
 opts.dropout = 0.5;
+
+opts.sizes = [100 100];
+opts.sizes = [500 500 2000];
 
 tic;
 
@@ -55,7 +58,7 @@ opts.n_fetch = 10;
 opts.n_push = 20;
 opts.ifdropout = 0;
 if ~exist('asy-rbm.mat', 'file')
-    for i=1:size(asy_error_list,1)
+    for i=2:size(asy_error_list,1)
         for j=1:size(asy_error_list,2)
             opts.thread_num = i;
             asy_error_list(i,j) = test_example_DBN(opts);
