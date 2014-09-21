@@ -70,9 +70,9 @@ function rbm = rbmtrain(rbm, x, opts)
             vb{one_index} = rbm.momentum * vb{one_index} + rbm.alpha * sum(v1 - v2)' / opts.batchsize;
             vc{one_index} = rbm.momentum * vc{one_index} + rbm.alpha * sum(h1 - h2)' / opts.batchsize;
 
-            accuredW{one_index} = accuredW{one_index} + vW{one_index};
-            accuredb{one_index} = accuredb{one_index} + vb{one_index};
-            accuredc{one_index} = accuredc{one_index} + vc{one_index};
+%             accuredW{one_index} = accuredW{one_index} + vW{one_index};
+%             accuredb{one_index} = accuredb{one_index} + vb{one_index};
+%             accuredc{one_index} = accuredc{one_index} + vc{one_index};
             W{one_index} = W{one_index} + vW{one_index};
             b{one_index} = b{one_index} + vb{one_index};
             c{one_index} = c{one_index} + vc{one_index};
@@ -83,9 +83,9 @@ function rbm = rbmtrain(rbm, x, opts)
 %                 rbm.W = rbm.W + accuredW{one_index};
 %                 rbm.b = rbm.b + accuredb{one_index};
 %                 rbm.c = rbm.c + accuredc{one_index};
-%                 w1 = 1/thread_num;
+                w1 = 1/thread_num;
 %                 w1 = 1/sqrt(thread_num);
-                w1 = 1-1/thread_num;
+%                 w1 = 1-1/thread_num;
 %                 w1 = 0;
                 w2 = 1-w1;
                 if thread_num == 1
@@ -98,9 +98,9 @@ function rbm = rbmtrain(rbm, x, opts)
 %                 rbm.W = rbm.W + accuredW{one_index};
 %                 rbm.b = rbm.b + accuredb{one_index};
 %                 rbm.c = rbm.c + accuredc{one_index};
-                accuredW{one_index} = zeros(size(rbm.W));
-                accuredb{one_index} = zeros(size(rbm.b));
-                accuredc{one_index} = zeros(size(rbm.c));
+%                 accuredW{one_index} = zeros(size(rbm.W));
+%                 accuredb{one_index} = zeros(size(rbm.b));
+%                 accuredc{one_index} = zeros(size(rbm.c));
             end
             
             index_step(one_index) = index_step(one_index) + 1;
