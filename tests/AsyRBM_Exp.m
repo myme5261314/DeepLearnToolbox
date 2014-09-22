@@ -1,6 +1,6 @@
 diary('log.txt');
 diary on;
-disp('v0.08');
+disp('v0.11');
 
 error_list = zeros(20, 10);
 asy_error_list = zeros(20, 10);
@@ -59,7 +59,7 @@ opts.n_fetch = 10;
 opts.n_push = 20;
 opts.ifdropout = 0;
 if ~exist('asy-rbm.mat', 'file')
-    for i=2:size(asy_error_list,1)
+    for i=1:size(asy_error_list,1)
         for j=1:size(asy_error_list,2)
             opts.thread_num = i;
             asy_error_list(i,j) = test_example_DBN(opts);
@@ -84,7 +84,7 @@ end
 %% Asy with dropout RBM thread_num performance.
 opts.ifdropout = 1;
 if ~exist('asy-rbm-dropout.mat', 'file')
-    for i=2:size(asy_error_list_dropout,1)
+    for i=1:size(asy_error_list_dropout,1)
         for j=1:size(asy_error_list_dropout,2)
             opts.thread_num = i;
             asy_error_list_dropout(i,j) = test_example_DBN(opts);
@@ -105,11 +105,11 @@ asy_rbm_dropout_accuracy = 1-mean(asy_error_list_dropout,2);
 
 
 figure('Name', 'Normal vs Asy RBM mean');
-plot(1:size(error_list,1), rbm_accuracy, 'red');
+plot(1:size(error_list,1), rbm_accuracy, 'r--o', 'MarkerSize', 3);
 hold all;
-plot(1:size(asy_error_list,1), asy_rbm_accuracy, 'blue');
+plot(1:size(asy_error_list,1), asy_rbm_accuracy(1:end), 'b--s', 'MarkerSize', 3);
 hold all;
-plot(1:size(asy_error_list_dropout,1), asy_rbm_dropout_accuracy, 'green');
-legend('Normal', 'Asy', 'Asy with dropout');
+plot(1:size(asy_error_list_dropout,1), asy_rbm_dropout_accuracy(1:end), 'g--d', 'MarkerSize', 3);
+legend('Normal', 'S2-ARBM', 'S2-ARBM-Dropout');
 
 diary off;
