@@ -9,6 +9,11 @@ function rbm = rbmtrain(rbm, x, opts)
     
     assert(rem(numbatches, 1) == 0, 'numbatches not integer');
     
+    if ~opts.ifAsy
+        opts.thread_num = 1;
+        opts.n_fetch = 1;
+        opts.n_push = 1;
+    end
     thread_num = opts.thread_num;
     n_fetch = opts.n_fetch;
     n_push = opts.n_push;
@@ -70,9 +75,9 @@ function rbm = rbmtrain(rbm, x, opts)
             vb{one_index} = rbm.momentum * vb{one_index} + rbm.alpha * sum(v1 - v2)' / opts.batchsize;
             vc{one_index} = rbm.momentum * vc{one_index} + rbm.alpha * sum(h1 - h2)' / opts.batchsize;
 
-%             accuredW{one_index} = accuredW{one_index} + vW{one_index};
-%             accuredb{one_index} = accuredb{one_index} + vb{one_index};
-%             accuredc{one_index} = accuredc{one_index} + vc{one_index};
+            accuredW{one_index} = accuredW{one_index} + vW{one_index};
+            accuredb{one_index} = accuredb{one_index} + vb{one_index};
+            accuredc{one_index} = accuredc{one_index} + vc{one_index};
             W{one_index} = W{one_index} + vW{one_index};
             b{one_index} = b{one_index} + vb{one_index};
             c{one_index} = c{one_index} + vc{one_index};
@@ -80,27 +85,27 @@ function rbm = rbmtrain(rbm, x, opts)
             err = err + sum(sum((v1 - v2) .^ 2)) / opts.batchsize;
             
             if mod( index_step(one_index), n_push )  == 0
-%                 rbm.W = rbm.W + accuredW{one_index};
-%                 rbm.b = rbm.b + accuredb{one_index};
-%                 rbm.c = rbm.c + accuredc{one_index};
+% %                 rbm.W = rbm.W + accuredW{one_index};
+% %                 rbm.b = rbm.b + accuredb{one_index};
+% %                 rbm.c = rbm.c + accuredc{one_index};
 %                 w1 = 1/thread_num;
-                w1 = 1/sqrt(thread_num);
-%                 w1 = 1-1/thread_num;
-%                 w1 = 0;
-                w2 = 1-w1;
-                if thread_num == 1
-                    w1 = 0;
-                    w2 = 1;
-                end
-                rbm.W = w1*rbm.W + w2*W{one_index};
-                rbm.b = w1*rbm.b + w2*b{one_index};
-                rbm.c = w1*rbm.c + w2*c{one_index};
-%                 rbm.W = rbm.W + accuredW{one_index};
-%                 rbm.b = rbm.b + accuredb{one_index};
-%                 rbm.c = rbm.c + accuredc{one_index};
-%                 accuredW{one_index} = zeros(size(rbm.W));
-%                 accuredb{one_index} = zeros(size(rbm.b));
-%                 accuredc{one_index} = zeros(size(rbm.c));
+% %                 w1 = 1/sqrt(thread_num);
+% %                 w1 = 1-1/thread_num;
+% %                 w1 = 0;
+%                 w2 = 1-w1;
+%                 if thread_num == 1
+%                     w1 = 0;
+%                     w2 = 1;
+%                 end
+%                 rbm.W = w1*rbm.W + w2*W{one_index};
+%                 rbm.b = w1*rbm.b + w2*b{one_index};
+%                 rbm.c = w1*rbm.c + w2*c{one_index};
+                rbm.W = rbm.W + accuredW{one_index};
+                rbm.b = rbm.b + accuredb{one_index};
+                rbm.c = rbm.c + accuredc{one_index};
+                accuredW{one_index} = zeros(size(rbm.W));
+                accuredb{one_index} = zeros(size(rbm.b));
+                accuredc{one_index} = zeros(size(rbm.c));
             end
             
             index_step(one_index) = index_step(one_index) + 1;

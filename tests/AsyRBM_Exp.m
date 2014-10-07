@@ -1,6 +1,6 @@
 diary('log.txt');
 diary on;
-disp('v0.11');
+disp('v0.12');
 
 error_list = zeros(20, 10);
 asy_error_list = zeros(20, 10);
@@ -9,14 +9,11 @@ opts.numepochs =   30;
 opts.batchsize = 100;
 opts.momentum  =   0;
 opts.alpha     =   1;
-opts.n_fetch = 10;
-opts.n_push = 20;
+opts.n_fetch = 20;
+opts.n_push = 10;
 opts.weightPenaltyL2 = 0;
 %% For ARBM
 opts.ifAsy = 0;
-opts.thread_num = 12;
-opts.n_fetch = 10;
-opts.n_push = 20;
 %% For ARBM Dropout
 opts.ifdropout = 1;
 opts.dropout = 0.5;
@@ -28,14 +25,15 @@ tic;
 
 %% Normal RBM split dataset performance.
 opts.ifAsy = 0;
-opts.n_fetch = 1;
-opts.n_push = 1;
 opts.ifdropout = 0;
 if ~exist('normal-rbm.mat', 'file')
     for i=1:size(error_list,1)
         for j=1:size(error_list,2)
+            disp(['Normal RBM- thread_num=', num2str(i), ', exp_index=', num2str(j)]);
+            tic;
             opts.thread_num = i;
             error_list(i,j) = test_example_DBN(opts);
+            toc;
         end
     end
     save('normal-rbm.mat', 'error_list');
@@ -55,14 +53,15 @@ end
 
 %% Asy without Dropout RBM thread_num performance.
 opts.ifAsy = 1;
-opts.n_fetch = 10;
-opts.n_push = 20;
 opts.ifdropout = 0;
 if ~exist('asy-rbm.mat', 'file')
-    for i=1:size(asy_error_list,1)
+    for i=2:size(asy_error_list,1)
         for j=1:size(asy_error_list,2)
+            disp(['Asy RBM- thread_num=', num2str(i), ', exp_index=', num2str(j)]);
+            tic;
             opts.thread_num = i;
             asy_error_list(i,j) = test_example_DBN(opts);
+            toc;
         end
     end
     save('asy-rbm.mat', 'asy_error_list');
@@ -86,8 +85,11 @@ opts.ifdropout = 1;
 if ~exist('asy-rbm-dropout.mat', 'file')
     for i=1:size(asy_error_list_dropout,1)
         for j=1:size(asy_error_list_dropout,2)
+            disp(['Asy RBM with dropout- thread_num=', num2str(i), ', exp_index=', num2str(j)]);
+            tic;
             opts.thread_num = i;
             asy_error_list_dropout(i,j) = test_example_DBN(opts);
+            toc;
         end
     end
     save('asy-rbm-dropout.mat', 'asy_error_list_dropout');
