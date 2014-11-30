@@ -44,7 +44,9 @@ function rbm = rbmtrain(rbm, x, opts)
     for i = 1 : opts.numepochs
         kk = randperm(m);
         err = 0;
-        thread_index = randi(thread_num, numbatches);
+%         thread_index = randi(thread_num, numbatches);
+        thread_index = repmat(1:thread_num, [1 ceil(numbatches/thread_num)]);
+        thread_index = thread_index(1:numbatches);
         index_step = zeros(thread_num, 1);
         for l = 1 : numbatches
             batch = x(kk((l - 1) * opts.batchsize + 1 : l * opts.batchsize), :);
@@ -83,7 +85,7 @@ function rbm = rbmtrain(rbm, x, opts)
             c{one_index} = c{one_index} + vc{one_index};
 
             err = err + sum(sum((v1 - v2) .^ 2)) / opts.batchsize;
-            
+            index_step(one_index) = index_step(one_index) + 1;
             if mod( index_step(one_index), n_push )  == 0
 %                 rbm.W = rbm.W + accuredW{one_index};
 %                 rbm.b = rbm.b + accuredb{one_index};
@@ -108,7 +110,7 @@ function rbm = rbmtrain(rbm, x, opts)
 %                 accuredc{one_index} = zeros(size(rbm.c));
             end
             
-            index_step(one_index) = index_step(one_index) + 1;
+%             index_step(one_index) = index_step(one_index) + 1;
             
         end
         
