@@ -1,6 +1,6 @@
 diary('log.txt');
 diary on;
-disp('v0.15');
+disp('v0.16');
 
 error_list = zeros(20, 10);
 asy_error_list = zeros(20, 10);
