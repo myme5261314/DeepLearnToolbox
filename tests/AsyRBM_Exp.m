@@ -5,11 +5,11 @@ disp('v0.16');
 error_list = zeros(20, 10);
 asy_error_list = zeros(20, 10);
 asy_error_list_dropout = zeros(20, 10);
-opts.numepochs =   30;
+opts.numepochs =   10;
 opts.batchsize = 100;
 opts.momentum  =   0;
-opts.alpha     =   1;
-opts.n_fetch = 10;
+opts.alpha     =   0.01;
+opts.n_fetch = 20;
 opts.n_push = 10;
 opts.weightPenaltyL2 = 0;
 %% For ARBM
@@ -18,7 +18,7 @@ opts.ifAsy = 0;
 opts.ifdropout = 1;
 opts.dropout = 0.5;
 
-opts.sizes = [100 100];
+opts.sizes = [1000 1000];
 % opts.sizes = [500 500 2000];
 
 tic;
